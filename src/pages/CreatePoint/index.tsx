@@ -1,6 +1,8 @@
 import { Header } from "../../components/Header";
 import { ItemCard } from "../../components/ItemCard";
 
+import { MapContainer, TileLayer, Marker } from "react-leaflet"
+
 import arrow from "../../assets/arrow.svg";
 import lampada from "../../assets/lampada.svg"
 import pilhas from "../../assets/pilhas.svg"
@@ -8,6 +10,7 @@ import paper from "../../assets/paper.svg"
 import oleo from "../../assets/oleo.svg"
 import organic from "../../assets/organic.svg"
 import eletronic from "../../assets/eletronic.svg"
+import { Map } from "../../components/Map";
 
 export function CreatePoint() {
     return (
@@ -75,9 +78,17 @@ export function CreatePoint() {
                             <span>Selecione o endereço no mapa</span>
                         </legend>
 
-                        <div className="w-full h-[304px] bg-[#34CB79]/30 p-8 rounded-xl">
-                            <div className="border-2 border-dashed border-[#8de0b2] flex flex-col items-center justify-center h-full rounded-xl">
-                                <p>mapa do estabelecimento</p>
+                        <div className="w-full h-[304px] rounded-xl">
+                            <div className="flex flex-col items-center justify-center h-full rounded-xl">
+                                <MapContainer center={[-29.7874701, -55.7909598]} zoom={15} scrollWheelZoom={true} className="w-full h-full">
+                                    <TileLayer
+                                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                    />
+
+                                    <Marker position={[-29.7874701, -55.7909598]} />
+                                    
+                                </MapContainer>
                             </div>
                         </div>
 
