@@ -80,15 +80,7 @@ export function CreatePoint() {
 
                         <div className="w-full h-[304px] rounded-xl">
                             <div className="flex flex-col items-center justify-center h-full rounded-xl">
-                                <MapContainer center={[-29.7874701, -55.7909598]} zoom={15} scrollWheelZoom={true} className="w-full h-full">
-                                    <TileLayer
-                                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                    />
-
-                                    <Marker position={[-29.7874701, -55.7909598]} />
-                                    
-                                </MapContainer>
+                                <Map />
                             </div>
                         </div>
 
