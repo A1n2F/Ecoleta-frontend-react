@@ -1,7 +1,7 @@
+import { useEffect, useState } from "react";
+
 import { Header } from "../../components/Header";
 import { ItemCard } from "../../components/ItemCard";
-
-import { MapContainer, TileLayer, Marker } from "react-leaflet"
 
 import arrow from "../../assets/arrow.svg";
 import lampada from "../../assets/lampada.svg"
@@ -10,9 +10,26 @@ import paper from "../../assets/paper.svg"
 import oleo from "../../assets/oleo.svg"
 import organic from "../../assets/organic.svg"
 import eletronic from "../../assets/eletronic.svg"
+
 import { Map } from "../../components/Map";
 
+import api from "../../services/api"
+
+interface Item {
+    id: number
+    title: string
+    image_url: string
+}
+
 export function CreatePoint() {
+    const [items, setItems] = useState<Item[]>([])
+
+    useEffect(() => {
+        api.get("items").then(response => {
+            setItems(response.data)
+        })
+    }, [])
+
     return (
         <div className="w-full h-full bg-[#F0F0F5]">
             <header className="flex items-center justify-between">
@@ -102,16 +119,6 @@ export function CreatePoint() {
                                 />
                             </div>
                         </div>
-
-                            <div className="mb-4 flex flex-col w-full">
-                                <label htmlFor="estado" className="text-[#6C6C80]">Estado</label>
-                                <input 
-                                    type="text"
-                                    name="estado"
-                                    id="cidade"
-                                    className="w-full px-2 py-3 bg-[#F0F0F5] rounded-xl mt-2" 
-                                />
-                            </div>
                     </fieldset>
 
                     <fieldset className="mt-16">
@@ -121,35 +128,12 @@ export function CreatePoint() {
                         </legend>
 
                         <ul className="w-full grid grid-cols-3 gap-4">
-                            <ItemCard 
-                                imageHero={lampada}
-                                title="Lâmpada"
-                            />
-
-                            <ItemCard 
-                                imageHero={pilhas}
-                                title="Pilhas e Baterias"
-                            />
-
-                            <ItemCard 
-                                imageHero={paper}
-                                title="Papéis e Papelão"
-                            />
-
-                            <ItemCard 
-                                imageHero={eletronic}
-                                title="Resíduos Eletrônicos"
-                            />
-
-                            <ItemCard 
-                                imageHero={organic}
-                                title="Resíduos Orgânicos"
-                            />
-
-                            <ItemCard 
-                                imageHero={oleo}
-                                title="Óleo de Cozinha"
-                            />
+                            {items.map(item => (
+                                <ItemCard key={item.id}
+                                    imageHero={item.image_url}
+                                    title={item.title}
+                                />
+                            ))}
                         </ul>
                     </fieldset>
 
