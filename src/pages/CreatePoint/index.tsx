@@ -1,19 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 
 import { Header } from "../../components/Header";
 import { ItemCard } from "../../components/ItemCard";
 
 import arrow from "../../assets/arrow.svg";
-import lampada from "../../assets/lampada.svg"
-import pilhas from "../../assets/pilhas.svg"
-import paper from "../../assets/paper.svg"
-import oleo from "../../assets/oleo.svg"
-import organic from "../../assets/organic.svg"
-import eletronic from "../../assets/eletronic.svg"
 
 import { Map } from "../../components/Map";
 
 import api from "../../services/api"
+
+import axios from "axios";
 
 interface Item {
     id: number
@@ -21,14 +17,59 @@ interface Item {
     image_url: string
 }
 
+interface IBGEUFResponse {
+    sigla: string
+}
+
+interface IBGECityResponse {
+    nome: string
+}
+
 export function CreatePoint() {
     const [items, setItems] = useState<Item[]>([])
+    const [ufs, setUfs] = useState<string[]>([])
+    const [cities, setCities] = useState<string[]>([])
+
+    const [selectedUf, setSelectedUf] = useState("0")
+    const [selectedCity, setSelectedCity] = useState("0")
 
     useEffect(() => {
         api.get("items").then(response => {
             setItems(response.data)
         })
     }, [])
+
+    useEffect(() => {
+        axios.get<IBGEUFResponse[]>("https://servicodados.ibge.gov.br/api/v1/localidades/estados").then(response => {
+            const ufInitials = response.data.map(uf => uf.sigla)
+
+            setUfs(ufInitials)
+        })
+    }, [])
+
+    useEffect(() => {
+        if(selectedUf === "0") {
+            return
+        }
+
+        axios.get<IBGECityResponse[]>(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${selectedUf}/municipios`).then(response => {
+            const cityNames = response.data.map(city => city.nome)
+
+            setCities(cityNames)
+        })
+    }, [selectedUf])
+
+    function handleSelectUf(event: ChangeEvent<HTMLSelectElement>) {
+        const uf = event.target.value
+
+        setSelectedUf(uf)
+    }
+
+    function handleSelectCity(event: ChangeEvent<HTMLSelectElement>) {
+        const city = event.target.value
+
+        setSelectedCity(city)
+    }
 
     return (
         <div className="w-full h-full bg-[#F0F0F5]">
@@ -104,19 +145,37 @@ export function CreatePoint() {
                         <div className="mt-4 flex gap-4">
                             <div className="mb-4 flex flex-col">
                                 <label htmlFor="numero" className="text-[#6C6C80]">Estado (UF)</label>
-                                <select name="uf" id="uf" className="px-2 py-3 bg-[#F0F0F5] rounded-xl mt-2">
+                                <select 
+                                    value={selectedUf} 
+                                    onChange={handleSelectUf} 
+                                    name="uf" 
+                                    id="uf" 
+                                    className="px-2 py-3 bg-[#F0F0F5] rounded-xl mt-2"
+                                >
                                     <option value="0">Selecione uma UF</option>
+                                    {ufs.map(uf => (
+                                        <option key={uf} value={uf}>{uf}</option>
+                                    ))}
                                 </select>
                             </div>
 
                             <div className="mb-4 flex flex-col w-full">
                                 <label htmlFor="city" className="text-[#6C6C80]">Cidade</label>
-                                <input 
-                                    type="text"
-                                    name="city"
-                                    id="city"
-                                    className="w-full px-2 py-3 bg-[#F0F0F5] rounded-xl mt-2" 
-                                />
+                                <select 
+                                    name="city" 
+                                    id="city" 
+                                    value={selectedCity}
+                                    onChange={handleSelectCity}
+                                    className="w-full px-2 py-3 bg-[#F0F0F5] rounded-xl mt-2"
+                                >
+                                    <option 
+                                        id="city"
+                                        className="w-full px-2 py-3 bg-[#F0F0F5] rounded-xl mt-2" 
+                                    />
+                                        {cities.map(city => (
+                                            <option key={city} value={city}>{city}</option>
+                                        ))}
+                                </select>
                             </div>
                         </div>
                     </fieldset>
