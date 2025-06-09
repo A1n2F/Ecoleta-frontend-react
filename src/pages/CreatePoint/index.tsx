@@ -10,6 +10,8 @@ import { Map } from "../../components/Map";
 import api from "../../services/api"
 
 import axios from "axios";
+import { MapContainer, Marker, TileLayer, useMapEvents } from "react-leaflet";
+import type { LeafletMouseEvent } from "leaflet";
 
 interface Item {
     id: number
