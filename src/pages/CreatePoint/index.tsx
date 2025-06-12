@@ -1,7 +1,6 @@
 import { useEffect, useState, type ChangeEvent } from "react";
 
 import { Header } from "../../components/Header";
-import { ItemCard } from "../../components/ItemCard";
 
 import arrow from "../../assets/arrow.svg";
 
@@ -34,6 +33,7 @@ export function CreatePoint() {
 
     const [selectedUf, setSelectedUf] = useState("0")
     const [selectedCity, setSelectedCity] = useState("0")
+    const [selectedItems, setSelectedItems] = useState<number[]>([])
 
     const [formData, setFormData] = useState({
         name: "",
@@ -83,6 +83,19 @@ export function CreatePoint() {
         const { name, value } = event.target
         
         setFormData({ ...formData, [name]: value })
+    }
+
+    function handleSelectItem(id: number) {
+        const alreadySelected = selectedItems.findIndex(item => item === id)
+
+        if(alreadySelected >= 0) {
+            const filteredItems = selectedItems.filter(item => item !== id)
+
+            setSelectedItems(filteredItems)
+        } else {
+            setSelectedItems([ ...selectedItems, id ])
+        }
+
     }
 
     return (
@@ -205,10 +218,15 @@ export function CreatePoint() {
 
                         <ul className="w-full grid grid-cols-3 gap-4">
                             {items.map(item => (
-                                <ItemCard key={item.id}
-                                    imageHero={item.image_url}
-                                    title={item.title}
-                                />
+                                <li key={item.id} onClick={() => handleSelectItem(item.id)} 
+                                    className={selectedItems.includes(item.id) ? (
+                                        "bg-green-200/80 border-2 border-green-600 w-[192px] h-[184px] flex flex-col items-center justify-center rounded-xl cursor-pointer"
+                                    ) : (
+                                        "bg-[#F0F0F5] w-[192px] h-[184px] flex flex-col items-center justify-center rounded-xl cursor-pointer"
+                                    )}>
+                                <img src={item.image_url} alt="" />
+                                <h2 className="text-xl mt-2 max-w-20 text-center">{item.title}</h2>
+                            </li>
                             ))}
                         </ul>
                     </fieldset>
@@ -225,3 +243,5 @@ export function CreatePoint() {
         </div>
     )
 }
+
+// className="bg-[#F0F0F5] w-[192px] h-[184px] flex flex-col items-center justify-center rounded-xl cursor-pointer"
