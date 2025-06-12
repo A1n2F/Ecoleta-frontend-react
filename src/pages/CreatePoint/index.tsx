@@ -35,6 +35,12 @@ export function CreatePoint() {
     const [selectedUf, setSelectedUf] = useState("0")
     const [selectedCity, setSelectedCity] = useState("0")
 
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+        telefone: ""
+    })
+
     useEffect(() => {
         api.get("items").then(response => {
             setItems(response.data)
@@ -73,6 +79,12 @@ export function CreatePoint() {
         setSelectedCity(city)
     }
 
+    function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
+        const { name, value } = event.target
+        
+        setFormData({ ...formData, [name]: value })
+    }
+
     return (
         <div className="w-full h-full bg-[#F0F0F5]">
             <header className="flex items-center justify-between">
@@ -106,6 +118,7 @@ export function CreatePoint() {
                                     name="name"
                                     id="name"
                                     className="w-full px-2 py-3 bg-[#F0F0F5] rounded-xl mt-2" 
+                                    onChange={handleInputChange}
                                 />
                             </div>
 
@@ -116,6 +129,7 @@ export function CreatePoint() {
                                     name="email"
                                     id="email"
                                     className="w-full px-2 py-3 bg-[#F0F0F5] rounded-xl mt-2" 
+                                    onChange={handleInputChange}
                                 />
                             </div>
 
@@ -127,6 +141,7 @@ export function CreatePoint() {
                                     id="telefone"
                                     placeholder="(  )"
                                     className="w-[292px] px-2 py-3 bg-[#F0F0F5] rounded-xl mt-2" 
+                                    onChange={handleInputChange}
                                 />
                             </div>
                         </legend>
