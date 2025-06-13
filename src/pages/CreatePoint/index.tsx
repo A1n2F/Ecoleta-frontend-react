@@ -1,5 +1,5 @@
-import { useEffect, useState, type ChangeEvent } from "react";
-
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
 import { Header } from "../../components/Header";
 
 import arrow from "../../assets/arrow.svg";
@@ -35,11 +35,15 @@ export function CreatePoint() {
     const [selectedCity, setSelectedCity] = useState("0")
     const [selectedItems, setSelectedItems] = useState<number[]>([])
 
+    const [selectedPosition, setSelectedPosition] = useState<[number, number]>([0,0])
+
     const [formData, setFormData] = useState({
         name: "",
         email: "",
         telefone: ""
     })
+
+    
 
     useEffect(() => {
         api.get("items").then(response => {
@@ -98,6 +102,34 @@ export function CreatePoint() {
 
     }
 
+    async function handleSubmit(event: FormEvent) {
+        event.preventDefault()
+
+        const { name, email, telefone } = formData
+        const uf = selectedUf
+        const city = selectedCity
+        const items = selectedItems
+        const [latitude, longitude] = selectedPosition
+
+        const data = {
+            name,
+            email,
+            telefone,
+            uf,
+            city,
+            items,
+            latitude,
+            longitude
+        }
+
+        await api.post("points", data)
+
+        alert("Ponto de coleta criado com sucesso!")
+
+        const navigate = useNavigate()
+        navigate("/")
+    }
+
     return (
         <div className="w-full h-full bg-[#F0F0F5]">
             <header className="flex items-center justify-between">
@@ -110,7 +142,7 @@ export function CreatePoint() {
             </header>
 
             <div className="flex flex-col items-center justify-center py-20">
-                <form className="w-[736px] bg-white p-16 rounded-xl">
+                <form onSubmit={handleSubmit} className="w-[736px] bg-white p-16 rounded-xl">
                     <h1 className="text-4xl text-[#322153] font-bold max-w-[270px]">Cadastro do ponto de coleta</h1>
 
                     <div className="w-full h-[304px] bg-[#34CB79]/30 mt-16 p-8 rounded-xl">
